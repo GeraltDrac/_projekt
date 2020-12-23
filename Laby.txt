@@ -1,0 +1,203 @@
+
+ZADANIA Z CUDOWNYCH BAZ DANYC
+
+lab 4.//
+
+zad.1.
+
+1. DELETE FROM postac WHERE funkcja='Troll' AND nazwa<>'Bjorn' ORDER BY data_ur ASC LIMIT 2;
+2. ALTER TABLE postac DROP PRIMARY KEY, CHANGE id_postaci id_postaci int;
+
+zad.2.
+
+1. ALTER TABLE postac ADD COLUMN pesel bigint(11);
+   UPDATE postac SET pesel='' WHERE nazwa='';
+2. ALTER TABLE postac MODIFY rodzaj enum('wiking','ptak','kobieta','syrena');
+3. INSERT INTO postac(nazwa,rodzaj,data_ur,wiek,funkcja,statek,pesel) VALUES('Grazyna_mojaJedyna','syrena','2000-05-29',800,'wiedzma','Kinia','00111103447');
+
+zad.3.
+
+1. UPDATE postac SET statek='Kinia' WHERE nazwa='Tesciowa';
+   UPDATE postac SET statek='Kinia' WHERE nazwa='Kinia';
+2. UPDATE statek SET max_ladownosc='max_ladownosc*0.7' WHERE data_wodowania BETWEEN '1911-01-01' AND '2010-12-31';
+3.  ALTER TABLE postac ADD CHECK(wiek<1011); 
+
+zad.4.
+
+1. ALTER TABLE postac MODIFY rodzaj enum('wiking','ptak','kobieta','syrena','szczur');
+   INSERT INTO postac(nazwa,rodzaj,data_ur,wiek,funkcja,pesel) VALUES('Misiu','szczur','2010-05-27',310,'szczur','10442305433');
+2. CREATE TABLE marynarz SELECT*FROM postac;
+
+
+zad.5.//
+
+1. UPDATE marynarz SET statek='0';
+2. DELETE FROM marynarz2 WHERE funkcja='strateg';
+3. DELETE FROM statek WHERE nazwa_statku='Plotka';
+   DELETE FROM statek WHERE nazwa_statku='Miks';
+4. DROP TABLE statek;
+5. CREATE TABLE dziki_zwierz(id_zwierza int(6) PRIMARY KEY AUTO_INCREMENT, nazwa VARCHAR(50), wiek int(30) UNSIGNED);
+6. 
+	-INSERT INTO dziki_zwierz SELECT*FROM postac2 WHERE rodzaj='waz';
+	-INSERT INTO dziki_zwierz SELECT*FROM postac2 WHERE rodzaj='ptak';
+	-INSERT INTO dziki_zwierz SELECT*FROM postac2 WHERE rodzaj='syrena';
+   
+Lab 5
+   zad.1.
+   1. CREATE TABLE kreatura LIKE wikingowie.kreatura;
+      CREATE TABLE zasob LIKE wikingowie.zasob;
+      CREATE TABLE ekwipunek LIKE wikingowie.ekwipunek;
+	  ALTER TABLE ekwipunek ADD FOREIGN KEY(idKreatury) REFERENCES kreatura(idKreatury);
+	  ALTER TABLE ekwipunek ADD FOREIGN KEY(idZasobu) REFERENCES zasob(idZasobu);
+	  INSERT INTO kreatura SELECT*FROM wikingowie.kreatura;
+	  INSERT INTO zasob SELECT*FROM wikingowie.zasob;
+	  INSERT INTO ekwipunek SELECT*FROM wikingowie.ekwipunek;
+	  SELECT*FROM wikingowie.zasob;
+	
+	2. SELECT*FROM zasob;
+    	3. SELECT*FROM zasob WHERE rodzaj = 'jedzenie';
+	4. (SELECT idZasobu, ilosc from ekwipunek WHERE idKreatury=1 or idKreatury=3 or idKreatury=5;)
+	   SELECT idZasobu, ilosc from ekwipunek WHERE idKreatury IN (1,3,5);
+	   
+    zad.2.
+    1. select*from kreatura where rodzaj !='wiedzma' and udzwig >=50;
+    2. SELECT*FROM kreatura WHERE waga BETWEEN 2 AND 5;
+	3. SELECT*FROM kreatura WHERE nazwa LIKE %or% AND udzwig BETWEEN 30 AND 70;
+	
+	zad.3.
+	1. SELECT dataPozyskania from zasob where month(dataPozyskania) IN (7,8);
+	2. SELECT*FROM zasob where rodzaj!='' order by waga;
+	   select * from zasob where rodzaj!='' order by waga asc;
+	3. SELECT*FROM kreatura ORDER BY dataUr lmit 5;  
+
+
+lab 6
+	zad.1.
+	1. SELECT AVG(ilosc) FROM zasob;
+	   SELECT rodzaj, avg(waga) from kreatura where rodzaj='wiking';
+	2. SELECT rodzaj, count(*), avg(waga) from kreatura group by rodzaj;
+	3. SELECT nazwa, 2020-year(dataUr) from kreatura;
+	
+	zad.2.
+	1. SELECT idZasobu, sum(ilosc) from ekwipunek group by idZasobu;
+	2. 
+	
+	
+	zad.4.
+	1. SELECT kreatura.nazwa, kreatura.dataUr, zasob.nazwa FROM kreatura NATURAL JOIN ekwipunek INNER JOIN zasob ON ekwipunek.idZasobu=zasob.idZasobu WHERE YEAR(kreatura.dataUr) BETWEEN 1670 AND 1679;
+    2. SELECT kreatura.nazwa, zasob.rodzaj FROM kreatura INNER JOIN ekwipunek ON kreatura.idKreatury=ekwipunek.idKreatury INNER JOIN zasob ON ekwipunek.idZasobu=zasob.idZasobu WHERE zasob.rodzaj='jedzenie' ORDER BY YEAR(kreatura.dataUr) DESC LIMIT 5;
+	   SELECT kreatura.nazwa FROM kreatura, ekwipunek, zasob WHERE kreatura.idKreatury=ekwipunek.idKreatury AND ekwipunek.idZasobu=zasob.idZasobu AND zasob.rodzaj='jedzenie' ORDER BY YEAR(dataUr) DESC LIMIT 5;
+	3. 
+	
+	zad.5.
+	1. SELECT k.rodzaj, e.ilosc, z.waga, e.ilosc*z.waga from kreatura k, ekwipunek e, zasob z where k.idKreatury=e.idKreatury and e.idZasobu=z.idZasobu order by k.rodzaj;
+       SELECT k.rodzaj, sum(e.ilosc) e.ilosc*z.waga from kreatura k, ekwipunek e, zasob z where k.idKreatury=e.idKreatury and e.idZasobu=z.idZasobu order by k.rodzaj;
+	2. select rodzaj, max(dataUr), min(dataUr) as 'max', min(dataUr) as 'min' from kreatura group by rodzaj;  
+LAB7
+
+Zad. 1 
+
+2.
+3. select w.nazwa, sum(e.ilosc) from wyprawa w, ekwipunek e, kreatura k, uczestnicy u, zasob z where
+e.idKreatury=k.idKreatury and u.id_wyprawy=w.id_wyprawy and u.id_uczestnika=k.idKreatury 
+and e.idZasobu=z.idZasobu group by w.nazwa;
+
+Zad. 2
+1.select w.nazwa, count(u.id_uczestnika),group_concat(k.nazwa) from 
+wyprawa w, kreatura k, uczestnicy u where u.id_wyprawy=w.id_wyprawy and u.id_uczestnika=k.idKreatury group by w.nazwa;
+2. select e.idEtapu, s.nazwa as "nazwa sektora", k.nazwa as "nazwa kierownika" from etapy_wyprawy e, sektor s, wyprawa w,kreatura k where w.kierownik=k.idKreatury 
+and w.id_wyprawy=e.idWyprawy and e.sektor=s.id_sektora order by w.data_rozpoczecia, e.kolejnosc;
+
+Zad. 3
+1. select s.nazwa as "nazwa sektora", count(e.sektor + ifnull(e.sektor,0)) as "ilosc odwiedzin" from sektor s, etapy_wyprawy e where e.sektor=s.id_sektora group by s.nazwa;
+2.SELECT k.nazwa, count(u.id_wyprawy),
+if(count(u.id_wyprawy) = 0, 'nie brał udziału w wyprawie', 'brał udział w wyprawie')
+from kreatura k
+left join uczestnicy u on u.id_uczestnika=idKreatury
+group by k.nazwa;
+
+Zad. 4 
+1. SELECT w.nazwa, SUM(LENGTH(e.dziennik)) AS znaki
+FROM wyprawa w
+JOIN etapy_wyprawy e
+ON w.id_wyprawy = e.idWyprawy
+GROUP BY w.nazwa
+HAVING znaki < 400
+2.select w.nazwa as "wyprawa", sum(z.waga*e.ilosc)/count(u.id_uczestnika) from kreatura k, zasob z, wyprawa w, uczestnicy u, 
+ekwipunek e where z.idZasobu=e.idZasobu and k.idKreatury=e.idKreatury and u.id_uczestnika=k.idKreatury and u.id_wyprawy=w.id_wyprawy group by w.nazwa;
+
+LAB8
+
+zadanie 1
+
+a1)
+delimiter $$
+create trigger waga_befor_insert
+before insert on kreatura
+for each row
+begin
+if new.waga < 0
+then set new.waga=0;
+end if;
+end
+$$
+delimiter ;
+zadanie 3;
+
+a2)
+
+DELIMITER $$
+CREATE PROCEDURE eliksir_sily(IN id int)
+BEGIN
+Update kreatura set udzwig = 1.2 * udziwg where idKreatury = id;
+END
+$$
+DELIMITER ;
+
+b)
+DELIMITER //
+CREATE FUNCTION wielkie_litery(text varchar(255))
+RETURNS VARCHAR(255)
+BEGIN
+DECLARE ucase VARCHAR(255);
+SET @ucase = UCASE(text);
+RETURN @ucase;
+END
+//
+DELIMITER ;
+
+zadanie 4
+
+a)
+create table system_alarmowy(id_alarmu int primary key auto_increment, wiadomosc varchar(100));
+b)
+DELIMITER $$
+
+CREATE TRIGGER uczestnicy_after_insert
+AFTER INSERT ON uczestnicy
+FOR EACH ROW
+BEGIN
+	DECLARE tesciowa varchar(100);
+	DECLARE sektor_id integer;
+	SET tesciowa = 'Tesciowa';
+	SET sektor_id = 7;
+	
+    
+IF tesciowa in (
+	SELECT nazwa from kreatura WHERE idKreatury in 
+	( SELECT id_uczestnika from uczestnicy where id_wyprawy=NEW.id_wyprawy)) 
+	
+THEN 
+    IF sektor_id in (
+	SELECT sektor FROM etapy_wyprawy WHERE idWyprawy=NEW.id_wyprawy
+	) 
+	then 
+    INSERT INTO system_alarmowy VALUES(default,'Tesciowa nadchodzi');
+	end if;
+    end if;
+    END
+$$
+
+DELIMITER //
+
+
